@@ -178,7 +178,14 @@ void do_names(struct Client* sptr, struct Channel* chptr, int filter)
     }
     if (IsChanOp(member)) {
       if ((IsNamesX(sptr) || CapActive(sptr, CAP_NAMESX)) || !done_prefix) {
-        buf[idx++] = '@';
+        if ((OpLevel(member) > 49) && (OpLevel(member)<100))
+		buf[idx++] = '%';
+        if ((OpLevel(member) > 99) && (OpLevel(member)<200))
+		buf[idx++] = '@';
+        if ((OpLevel(member) > 199) && (OpLevel(member)<350))
+		buf[idx++] = '&';
+        if ((OpLevel(member) > 349) && (OpLevel(member)<1000))
+		buf[idx++] = '~';
         done_prefix = 1;
       }
     }

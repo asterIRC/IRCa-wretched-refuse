@@ -249,7 +249,7 @@ feature_notify_oplevels(void)
 static void
 feature_notify_halfops(void)
 {
-  add_isupport_s("PREFIX", feature_bool(FEAT_HALFOPS) ? "(ohv)@%+" : "(ov)@+");
+  add_isupport_s("PREFIX", feature_bool(FEAT_HALFOPS) ? "(qEohv)~&@%+" : "(qEoov)~&@%+");
   add_isupport_s("STATUSMSG", feature_bool(FEAT_HALFOPS) ? "@%+" : "@+");
 }
 

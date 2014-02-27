@@ -1203,7 +1203,7 @@ void send_channel_modes(struct Client *cptr, struct Channel *chptr)
   int                 opped_members_index = 0;
   struct Membership** opped_members = NULL;
   int                 last_oplevel = 0;
-  int                 send_oplevels = 0;
+  int                 send_oplevels = 1;
 
   assert(0 != cptr);
   assert(0 != chptr); 
@@ -2221,8 +2221,9 @@ modebuf_flush_int(struct ModeBuf *mbuf, int all)
       if ((totalbuflen - IRCD_MAX(9, tmp)) <= 0) /* don't overflow buffer */
 	MB_TYPE(mbuf, i) |= MODE_SAVE; /* save for later */
       else {
-	bufptr[(*bufptr_i)++] = MB_TYPE(mbuf, i) & MODE_CHANOP ? 'o' :
-                                (MB_TYPE(mbuf, i) & MODE_HALFOP ? 'h' : 'v');
+	bufptr[(*bufptr_i)++] = MB_TYPE(mbuf, i) & MODE_CHANOP & MB_OPLEVEL(mbuf, i) > 349 & MB_OPLEVEL(mbuf, i) < 1000 ? 'q' :
+				(MB_TYPE(mbuf, i) & MODE_CHANOP & MB_OPLEVEL(mbuf, i) > 199 & MB_OPLEVEL(mbuf, i) < 350 ? 'E' : (MB_TYPE(mbuf, i) & MODE_CHANOP ? 'o' :
+                                (MB_TYPE(mbuf, i) & MODE_HALFOP ? 'h' : 'v')));
 	totalbuflen -= IRCD_MAX(9, tmp) + 1;
       }
     } else if (MB_TYPE(mbuf, i) & (MODE_BAN | MODE_EXCEPT | MODE_APASS | MODE_UPASS | MODE_REDIRECT)) {
@@ -4367,6 +4368,8 @@ mode_parse(struct ModeBuf *mbuf, struct Client *cptr, struct Client *sptr,
 	   struct Membership* member)
 {
   static int chan_flags[] = {
+    MODE_CHANOP,	'q',
+    MODE_CHANOP,	'E',
     MODE_CHANOP,	'o',
     MODE_HALFOP,	'h',
     MODE_VOICE,		'v',
@@ -4520,6 +4523,8 @@ mode_parse(struct ModeBuf *mbuf, struct Client *cptr, struct Client *sptr,
           mode_parse_dummy(&state, flag_p);
           break;
         }
+      case 'q':
+      case 'E':
       case 'o':
       case 'v':
         mode_parse_client(&state, flag_p);

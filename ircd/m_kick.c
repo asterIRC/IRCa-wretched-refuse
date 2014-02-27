@@ -151,7 +151,7 @@ int m_kick(struct Client *cptr, struct Client *sptr, int parc, char *parv[])
   /* Don't allow to kick member with a higher op-level,
    * or members with the same op-level unless both are MAXOPLEVEL.
    */
-  if (OpLevel(member) < OpLevel(member2)
+  if (compare_member_oplevel(&member2, &member)<1
       || (OpLevel(member) == OpLevel(member2)
           && OpLevel(member) < MAXOPLEVEL))
     return send_reply(sptr, ERR_NOTLOWEROPLEVEL, cli_name(who), chptr->chname,
