@@ -910,8 +910,12 @@ struct SHostConf* find_shost_conf(struct Client *cptr, char *host, char *passwd,
         continue;
     }
 
-    if (sconf->usermask && match(sconf->usermask, cli_username(cptr)))
-      continue;
+    if (sconf->usermask) {
+      if (match(sconf->usermask, cli_username(cptr)) &&
+          !((sconf->flags & SHFLAG_MATCHUSER) && !match(sconf->usermask, cli_user(cptr)->username)))
+        continue;
+    }
+
     if (sconf->bits > 0) {
       if (!ipmask_check(&cli_ip(cptr), &sconf->address, sconf->bits))
         continue;
@@ -1183,6 +1187,7 @@ void free_mapping(struct s_map *smap)
   MyFree(smap->name);
   MyFree(smap->command);
   MyFree(smap->prepend);
+  MyFree(smap->defaulttext);
   MyFree(smap);
 }
 

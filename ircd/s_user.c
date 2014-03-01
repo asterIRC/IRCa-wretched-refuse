@@ -377,6 +377,12 @@ int register_user(struct Client *cptr, struct Client *sptr)
     Count_unknownbecomesclient(sptr, UserStats);
 
     /*
+     * Ensure fake lag minimum and factor are retrived from the users class.
+     */
+    cli_lag_min(sptr) = -2;
+    cli_lag_factor(sptr) = -2;
+
+    /*
      * Set user's initial modes
      */
     tmpstr = (char*)client_get_default_umode(sptr);
@@ -413,7 +419,11 @@ int register_user(struct Client *cptr, struct Client *sptr)
     /* Look for an automatic Spoofhost to apply */
     sconf = find_shost_conf(sptr, NULL, NULL, &res);
     if ((res == 0) && (sconf != 0)) {
-      ircd_strncpy(cli_user(sptr)->sethost, sconf->spoofhost, USERLEN + HOSTLEN + 1);
+      if (strchr(sconf->spoofhost, '@') != NULL)
+        ircd_strncpy(cli_user(sptr)->sethost, sconf->spoofhost, USERLEN + HOSTLEN + 1);
+      else
+        ircd_snprintf(0, cli_user(sptr)->sethost, USERLEN + HOSTLEN + 1, "%s@%s",
+                      cli_user(sptr)->username, sconf->spoofhost);
       SetSetHost(sptr);
       SetHiddenHost(sptr);
     }
@@ -589,7 +599,8 @@ int register_user(struct Client *cptr, struct Client *sptr)
       FlagClr(&flags, FLAG_SETHOST);
     client_set_privs(sptr, NULL);
     send_umode(cptr, sptr, &flags, ALL_UMODES);
-    if ((cli_snomask(sptr) != SNO_DEFAULT) && HasFlag(sptr, FLAG_SERVNOTICE))
+    if ((cli_snomask(sptr) != feature_int(FEAT_SNOMASK_DEFAULT)) &&
+        HasFlag(sptr, FLAG_SERVNOTICE))
       send_reply(sptr, RPL_SNOMASK, cli_snomask(sptr), cli_snomask(sptr));
 
     if ((connclass = get_client_class_conf(sptr)) != NULL)
@@ -1406,7 +1417,8 @@ int set_user_mode(struct Client *cptr, struct Client *sptr, int parc,
     send_reply(acptr, RPL_UMODEIS, buf);
     if (HasFlag(acptr, FLAG_SERVNOTICE) && MyConnect(acptr)
         && cli_snomask(acptr) !=
-        (unsigned int)(IsOper(acptr) ? SNO_OPERDEFAULT : SNO_DEFAULT))
+        (unsigned int)(IsOper(acptr) ? feature_int(FEAT_SNOMASK_OPERDEFAULT) :
+         feature_int(FEAT_SNOMASK_DEFAULT)))
       send_reply(acptr, RPL_SNOMASK, cli_snomask(acptr), cli_snomask(acptr));
     return 0;
   }
@@ -1440,7 +1452,8 @@ int set_user_mode(struct Client *cptr, struct Client *sptr, int parc,
         }
         else
           tmpmask = (what == MODE_ADD) ?
-              (IsAnOper(acptr) ? SNO_OPERDEFAULT : SNO_DEFAULT) : 0;
+              (IsAnOper(acptr) ? feature_int(FEAT_SNOMASK_OPERDEFAULT) :
+               feature_int(FEAT_SNOMASK_DEFAULT)) : 0;
         if (tmpmask)
 	  SetServNotice(acptr);
         else
