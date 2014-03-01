@@ -1216,7 +1216,7 @@ hide_hostmask(struct Client *cptr)
                                        cptr);
     else if (IsChanOp(chan) || IsHalfOp(chan) || HasVoice(chan))
       sendcmdto_channel_butserv_butone(&his, CMD_MODE, chan->channel, cptr, 0,
-        "%H +%c %C", chan->channel, IsChanOp(chan) ? 'o' : (IsHalfOp(chan) ? 'h' : 'v'), cptr);
+        "%H +%c %C", chan->channel, IsChanOp(chan) ? (OpLevel(chan) < 150 ? 'q' : (OpLevel(chan) < 301 ? 'E' : 'o')) : (IsHalfOp(chan) ? 'h' : 'v'), cptr);
   }
   return 0;
 }

@@ -2058,6 +2058,14 @@ find_delayed_joins(const struct Channel *chan)
   return 0;
 }
 
+char *chngChar (char *str, char oldChar, char newChar) {
+    char *strPtr = str;
+    while ((strPtr = strchr (strPtr, oldChar)) != NULL)
+        *strPtr++ = newChar;
+    return str;
+} // Found on stackoverflow
+
+
 /** Flush out the modes
  * This is the workhorse of our ModeBuf suite; this actually generates the
  * output MODE commands, HACK notices, or whatever.  It's pretty complicated.
@@ -2221,8 +2229,8 @@ modebuf_flush_int(struct ModeBuf *mbuf, int all)
       if ((totalbuflen - IRCD_MAX(9, tmp)) <= 0) /* don't overflow buffer */
 	MB_TYPE(mbuf, i) |= MODE_SAVE; /* save for later */
       else {
-	bufptr[(*bufptr_i)++] = MB_TYPE(mbuf, i) & MODE_CHANOP & MB_OPLEVEL(mbuf, i) > 349 & MB_OPLEVEL(mbuf, i) < 1000 ? 'q' :
-				(MB_TYPE(mbuf, i) & MODE_CHANOP & MB_OPLEVEL(mbuf, i) > 199 & MB_OPLEVEL(mbuf, i) < 350 ? 'E' : (MB_TYPE(mbuf, i) & MODE_CHANOP ? 'o' :
+	bufptr[(*bufptr_i)++] = MB_TYPE(mbuf, i) & MODE_CHANOP & MB_OPLEVEL(mbuf, i) > 0 & MB_OPLEVEL(mbuf, i) < 150 ? 'q' :
+				(MB_TYPE(mbuf, i) & MODE_CHANOP & MB_OPLEVEL(mbuf, i) > 151 & MB_OPLEVEL(mbuf, i) < 301 ? 'E' : (MB_TYPE(mbuf, i) & MODE_CHANOP ? 'o' :
                                 (MB_TYPE(mbuf, i) & MODE_HALFOP ? 'h' : 'v')));
 	totalbuflen -= IRCD_MAX(9, tmp) + 1;
       }
@@ -2505,7 +2513,7 @@ modebuf_flush_int(struct ModeBuf *mbuf, int all)
                                  FLAG_OPLEVELS, FLAG_LAST_FLAG,
                                  "%H %s%s%s%s%s%s %Tu", mbuf->mb_channel,
                                  rembuf_i ? "-" : "", rembuf, addbuf_i ? "+" : "",
-                                 addbuf, remstr, addstr,
+                                 chngChar(chngChar(addbuf, 'E', 'o'), 'q', 'o'), remstr, addstr,
                                  mbuf->mb_channel->creationtime);
       /* Send no oplevels to servers without oplevels support. */
       sendcmdto_flag_serv_butone(mbuf->mb_source, CMD_MODE, mbuf->mb_connect,
@@ -4100,9 +4108,7 @@ mode_parse_client(struct ParseState *state, int *flag_p)
         /* Ignore the colon and its argument. */
       } else if (!(state->flags & MODE_PARSE_FORCE)
           && state->member
-          && (req_oplevel < OpLevel(state->member)
-              || (req_oplevel == OpLevel(state->member)
-                  && OpLevel(state->member) < MAXOPLEVEL)
+          && (req_oplevel > OpLevel(state->member) || (req_oplevel == OpLevel(state->member) && OpLevel(state->member) < MAXOPLEVEL)
               || req_oplevel > MAXOPLEVEL)) {
         send_reply(state->sptr, ERR_NOTLOWEROPLEVEL,
                    t_str, state->chptr->chname,
@@ -4223,7 +4229,7 @@ mode_process_clients(struct ParseState *state)
          * as one's own unless both are at MAXOPLEVEL. */
 	if (state->sptr != state->cli_change[i].client
             && state->member
-            && ((OpLevel(member) < OpLevel(state->member))
+            && ((OpLevel(member) > OpLevel(state->member))
                 || (OpLevel(member) == OpLevel(state->member)
                     && OpLevel(member) < MAXOPLEVEL))) {
 	    int equal = (OpLevel(member) == OpLevel(state->member));
@@ -4253,7 +4259,7 @@ mode_process_clients(struct ParseState *state)
       else if (OpLevel(state->member) >= MAXOPLEVEL)
           SetOpLevel(member, OpLevel(state->member));
       else
-        SetOpLevel(member, OpLevel(state->member) + 1);
+        SetOpLevel(member, OpLevel(state->member) - 1);
     }
 
     /* actually effect the change */
