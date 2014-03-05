@@ -180,9 +180,9 @@ void do_names(struct Client* sptr, struct Channel* chptr, int filter)
       if ((IsNamesX(sptr) || CapActive(sptr, CAP_NAMESX)) || !done_prefix) {
         if ((OpLevel(member) < 400) && (OpLevel(member)>301))
 		buf[idx++] = '@';
-        if ((OpLevel(member) < 300) && (OpLevel(member)>251))
+        if ((OpLevel(member) < 300) && (OpLevel(member)>151))
 		buf[idx++] = '&';
-        if ((OpLevel(member) < 250) && (OpLevel(member)>0))
+        if ((OpLevel(member) < 150) && (OpLevel(member)>0))
 		buf[idx++] = '~';
 	else buf[idx++] = '@';
         done_prefix = 1;

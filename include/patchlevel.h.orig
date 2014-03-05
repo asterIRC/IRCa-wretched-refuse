@@ -18,9 +18,9 @@
  * $Id: patchlevel.h 1942 2010-02-02 23:29:03Z entrope $
  *
  */
-#define PATCHLEVEL "14+Nefarious(2.0.0)+IRCa(0.90)"
+#define PATCHLEVEL "+Nefarious2.0.0+IRCa(0.90)"
 
-#define RELEASE ".12."
+#define RELEASE ".12.14"
 
 /*
  * Deliberate empty lines
@@ -28,7 +28,7 @@
 /* Do NOT edit those: */
 
 #ifndef BASE_VERSION
-#define BASE_VERSION "IRCu2.10"
+#define BASE_VERSION "u2.10"
 #endif
 
 #ifndef MAJOR_PROTOCOL

@@ -1,0 +1,71 @@
+***************
+*** 1203,1209 ****
+    int                 opped_members_index = 0;
+    struct Membership** opped_members = NULL;
+    int                 last_oplevel = 0;
+-   int                 send_oplevels = 0;
+  
+    assert(0 != cptr);
+    assert(0 != chptr); 
+--- 1203,1209 ----
+    int                 opped_members_index = 0;
+    struct Membership** opped_members = NULL;
+    int                 last_oplevel = 0;
++   int                 send_oplevels = 1;
+  
+    assert(0 != cptr);
+    assert(0 != chptr); 
+***************
+*** 2221,2228 ****
+        if ((totalbuflen - IRCD_MAX(9, tmp)) <= 0) /* don't overflow buffer */
+  	MB_TYPE(mbuf, i) |= MODE_SAVE; /* save for later */
+        else {
+- 	bufptr[(*bufptr_i)++] = MB_TYPE(mbuf, i) & MODE_CHANOP ? 'o' :
+-                                 (MB_TYPE(mbuf, i) & MODE_HALFOP ? 'h' : 'v');
+  	totalbuflen -= IRCD_MAX(9, tmp) + 1;
+        }
+      } else if (MB_TYPE(mbuf, i) & (MODE_BAN | MODE_EXCEPT | MODE_APASS | MODE_UPASS | MODE_REDIRECT)) {
+--- 2221,2229 ----
+        if ((totalbuflen - IRCD_MAX(9, tmp)) <= 0) /* don't overflow buffer */
+  	MB_TYPE(mbuf, i) |= MODE_SAVE; /* save for later */
+        else {
++ 	bufptr[(*bufptr_i)++] = MB_TYPE(mbuf, i) & MODE_CHANOP & MB_OPLEVEL(mbuf, i) > 349 & MB_OPLEVEL(mbuf, i) < 1000 ? 'q' :
++ 				(MB_TYPE(mbuf, i) & MODE_CHANOP & MB_OPLEVEL(mbuf, i) > 199 & MB_OPLEVEL(mbuf, i) < 350 ? 'E' : (MB_TYPE(mbuf, i) & MODE_CHANOP ? 'o' :
++                                 (MB_TYPE(mbuf, i) & MODE_HALFOP ? 'h' : 'v')));
+  	totalbuflen -= IRCD_MAX(9, tmp) + 1;
+        }
+      } else if (MB_TYPE(mbuf, i) & (MODE_BAN | MODE_EXCEPT | MODE_APASS | MODE_UPASS | MODE_REDIRECT)) {
+***************
+*** 4367,4372 ****
+  	   struct Membership* member)
+  {
+    static int chan_flags[] = {
+      MODE_CHANOP,	'o',
+      MODE_HALFOP,	'h',
+      MODE_VOICE,		'v',
+--- 4368,4375 ----
+  	   struct Membership* member)
+  {
+    static int chan_flags[] = {
++     MODE_CHANOP,	'q',
++     MODE_CHANOP,	'E',
+      MODE_CHANOP,	'o',
+      MODE_HALFOP,	'h',
+      MODE_VOICE,		'v',
+***************
+*** 4520,4525 ****
+            mode_parse_dummy(&state, flag_p);
+            break;
+          }
+        case 'o':
+        case 'v':
+          mode_parse_client(&state, flag_p);
+--- 4523,4530 ----
+            mode_parse_dummy(&state, flag_p);
+            break;
+          }
++       case 'q':
++       case 'E':
+        case 'o':
+        case 'v':
+          mode_parse_client(&state, flag_p);

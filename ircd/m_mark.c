@@ -111,49 +111,49 @@ int ms_mark(struct Client* cptr, struct Client* sptr, int parc, char* parv[])
     if(parc < 4)
       return protocol_violation(sptr, "MARK webirc received too few parameters (%u)", parc);
 
-    if ((acptr = FindUser(parv[1]))) {
+    if ((acptr = findNUser(parv[1]))) {
       ircd_strncpy(cli_webirc(acptr), parv[3], BUFSIZE);
-      sendcmdto_serv_butone(sptr, CMD_MARK, cptr, "%s %s :%s", cli_name(acptr), MARK_WEBIRC, parv[3]);
+      sendcmdto_serv_butone(sptr, CMD_MARK, cptr, "%s%s %s :%s", NumNick(acptr), MARK_WEBIRC, parv[3]);
     }
   } else if (!strcmp(parv[2], MARK_GEOIP)) {
     if(parc < 5)
       return protocol_violation(sptr, "MARK geoip received too few parameters (%u)", parc);
-    if ((acptr = FindUser(parv[1]))) {
+    if ((acptr = findNUser(parv[1]))) {
       geoip_apply_mark(acptr, parv[3], parv[4]);
-      sendcmdto_serv_butone(sptr, CMD_MARK, cptr, "%s %s %s %s", cli_name(acptr), MARK_GEOIP, parv[3], parv[4]);
+      sendcmdto_serv_butone(sptr, CMD_MARK, cptr, "%s%s %s %s %s", NumNick(acptr), MARK_GEOIP, parv[3], parv[4]);
     }
   } else if (!strcmp(parv[2], MARK_CVERSION)) {
     if(parc < 4)
       return protocol_violation(sptr, "MARK client version received too few parameters (%u)", parc);
 
-    if ((acptr = FindUser(parv[1]))) {
+    if ((acptr = findNUser(parv[1]))) {
        ircd_strncpy(cli_version(acptr), parv[3], VERSIONLEN);
-       sendcmdto_serv_butone(sptr, CMD_MARK, cptr, "%s %s :%s", cli_name(acptr), MARK_CVERSION, parv[3]);
+       sendcmdto_serv_butone(sptr, CMD_MARK, cptr, "%s%s %s :%s", NumNick(acptr), MARK_CVERSION, parv[3]);
     }
   } else if (!strcmp(parv[2], MARK_SSLCLIFP)) {
     if(parc < 4)
       return protocol_violation(sptr, "MARK SSL client certificate fingerprint received too few parameters (%u)", parc);
 
-    if ((acptr = FindUser(parv[1]))) {
+    if ((acptr = findNUser(parv[1]))) {
        ircd_strncpy(cli_sslclifp(acptr), parv[3], BUFSIZE);
-       sendcmdto_serv_butone(sptr, CMD_MARK, cptr, "%s %s :%s", cli_name(acptr), MARK_SSLCLIFP, parv[3]);
+       sendcmdto_serv_butone(sptr, CMD_MARK, cptr, "%s%s %s :%s", NumNick(acptr), MARK_SSLCLIFP, parv[3]);
     }
   } else if (!strcmp(parv[2], MARK_KILL)) {
     if(parc < 4)
       return protocol_violation(sptr, "MARK kill received too few parameters (%u)", parc);
 
-    if ((acptr = FindUser(parv[1]))) {
+    if ((acptr = findNUser(parv[1]))) {
       ircd_strncpy(cli_killmark(acptr), parv[3], BUFSIZE);
-      sendcmdto_serv_butone(sptr, CMD_MARK, cptr, "%s %s :%s", cli_name(acptr), MARK_KILL, parv[3]);
+      sendcmdto_serv_butone(sptr, CMD_MARK, cptr, "%s %s :%s", NumNick(acptr), MARK_KILL, parv[3]);
     }
   } else if (!strcmp(parv[2], MARK_MARK) || !strcmp(parv[2], MARK_DNSBL_DATA)) {
     if(parc < 4)
       return protocol_violation(sptr, "MARK MARK (tag) received too few parameters (%u)", parc);
 
-    if ((acptr = FindUser(parv[1]))) {
+    if ((acptr = findNUser(parv[1]))) {
       add_mark(acptr, parv[3]);
       SetMarked(acptr);
-      sendcmdto_serv_butone(sptr, CMD_MARK, cptr, "%s %s :%s", cli_name(acptr), MARK_MARK, parv[3]);
+      sendcmdto_serv_butone(sptr, CMD_MARK, cptr, "%s%s %s :%s", NumNick(acptr), MARK_MARK, parv[3]);
     }
   }
 

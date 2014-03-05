@@ -266,30 +266,30 @@ int server_estab(struct Client *cptr, struct ConfItem *aconf)
                       cli_user(acptr)->swhois);
 
       if (cli_version(acptr) && !EmptyString(cli_version(acptr)))
-        sendcmdto_one(cli_user(acptr)->server, CMD_MARK, cptr, "%s %s :%s",
+        sendcmdto_one(cli_user(acptr)->server, CMD_MARK, cptr, "%s%s %s :%s",
                       cli_name(acptr), MARK_CVERSION, cli_version(acptr));
 
       if (cli_webirc(acptr) && !EmptyString(cli_webirc(acptr)))
-        sendcmdto_one(cli_user(acptr)->server, CMD_MARK, cptr, "%s %s :%s",
+        sendcmdto_one(cli_user(acptr)->server, CMD_MARK, cptr, "%s%s %s :%s",
                       cli_name(acptr), MARK_WEBIRC, cli_webirc(acptr));
 
       for (lp = cli_marks(acptr); lp; lp = lp->next) {
-        sendcmdto_one(cli_user(acptr)->server, CMD_MARK, cptr, "%s %s :%s",
+        sendcmdto_one(cli_user(acptr)->server, CMD_MARK, cptr, "%s%s %s :%s",
                       cli_name(acptr), MARK_MARK, lp->value.cp);
       }
 
       if (cli_sslclifp(acptr) && !EmptyString(cli_sslclifp(acptr)))
-        sendcmdto_one(cli_user(acptr)->server, CMD_MARK, cptr, "%s %s :%s",
+        sendcmdto_one(cli_user(acptr)->server, CMD_MARK, cptr, "%s%s %s :%s",
                       cli_name(acptr), MARK_SSLCLIFP, cli_sslclifp(acptr));
 
       if (cli_killmark(acptr) && !EmptyString(cli_killmark(acptr)))
-        sendcmdto_one(cli_user(acptr)->server, CMD_MARK, cptr, "%s %s :%s",
+        sendcmdto_one(cli_user(acptr)->server, CMD_MARK, cptr, "%s%s %s :%s",
                       cli_name(acptr), MARK_KILL, cli_killmark(acptr));
 
       if (IsGeoIP(acptr)) {
         if (cli_countrycode(acptr) && !EmptyString(cli_countrycode(acptr)) &&
             cli_continentcode(acptr) && !EmptyString(cli_continentcode(acptr)))
-          sendcmdto_one(cli_user(acptr)->server, CMD_MARK, cptr, "%s %s %s %s",
+          sendcmdto_one(cli_user(acptr)->server, CMD_MARK, cptr, "%s%s %s %s %s",
                         cli_name(acptr), MARK_GEOIP, cli_countrycode(acptr),
                         cli_continentcode(acptr));
       }

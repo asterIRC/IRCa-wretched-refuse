@@ -551,26 +551,26 @@ int register_user(struct Client *cptr, struct Client *sptr)
     struct SLink *lp;
 
     if (cli_webirc(sptr) && !EmptyString(cli_webirc(sptr)))
-      sendcmdto_serv_butone(&me, CMD_MARK, cptr, "%s %s :%s", cli_name(cptr), MARK_WEBIRC, cli_webirc(sptr));
+      sendcmdto_serv_butone(&me, CMD_MARK, cptr, "%s%s %s :%s", NumNick(cptr), MARK_WEBIRC, cli_webirc(sptr));
 
     for (lp = cli_marks(cptr); lp; lp = lp->next) {
-      sendcmdto_serv_butone(&me, CMD_MARK, cptr, "%s %s :%s", cli_name(cptr), MARK_MARK, lp->value.cp);
+      sendcmdto_serv_butone(&me, CMD_MARK, cptr, "%s%s %s :%s", NumNick(cptr), MARK_MARK, lp->value.cp);
     }
 
     if (cli_sslclifp(sptr) && !EmptyString(cli_sslclifp(sptr)))
-      sendcmdto_serv_butone(&me, CMD_MARK, cptr, "%s %s :%s", cli_name(cptr), MARK_SSLCLIFP, cli_sslclifp(sptr));
+      sendcmdto_serv_butone(&me, CMD_MARK, cptr, "%s%s %s :%s", NumNick(cptr), MARK_SSLCLIFP, cli_sslclifp(sptr));
 
     if (cli_version(sptr) && !EmptyString(cli_version(sptr)))
-      sendcmdto_serv_butone(&me, CMD_MARK, cptr, "%s %s :%s", cli_name(cptr), MARK_CVERSION, cli_version(sptr));
+      sendcmdto_serv_butone(&me, CMD_MARK, cptr, "%s%s %s :%s", NumNick(cptr), MARK_CVERSION, cli_version(sptr));
 
     if (cli_killmark(sptr) && !EmptyString(cli_killmark(sptr)))
-      sendcmdto_serv_butone(&me, CMD_MARK, cptr, "%s %s :%s", cli_name(cptr), MARK_KILL, cli_killmark(sptr));
+      sendcmdto_serv_butone(&me, CMD_MARK, cptr, "%s%s %s :%s", NumNick(cptr), MARK_KILL, cli_killmark(sptr));
 
     if (IsGeoIP(sptr)) {
       if (cli_countrycode(sptr) && !EmptyString(cli_countrycode(sptr)) &&
           cli_continentcode(sptr) && !EmptyString(cli_continentcode(sptr)))
-        sendcmdto_serv_butone(&me, CMD_MARK, cptr, "%s %s %s %s",
-                      cli_name(sptr), MARK_GEOIP, cli_countrycode(sptr),
+        sendcmdto_serv_butone(&me, CMD_MARK, cptr, "%s%s %s %s %s",
+                      NumNick(sptr), MARK_GEOIP, cli_countrycode(sptr),
                       cli_continentcode(sptr));
     }
 
