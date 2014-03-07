@@ -38,13 +38,13 @@
  * See also F:NICKLEN in ircd.conf.
  */
 #ifndef NICKLEN
-#define NICKLEN         30
+#define NICKLEN         90
 #endif
 /** Maximum length allowed of a user name, including an optional
  * leading '~' if the user name has not been authenticated by an auth (RFC 931)
  * server query.
  */
-#define USERLEN         10
+#define USERLEN         20
 /** Exactly long enough to hold one (1) segment of FQDN or hostname.
  * This is due to an historical misinterpretation of RFC 1034.
  * 3.1. Name space specifications and terminology
@@ -68,7 +68,7 @@
  * with the ACCOUNT (AC) command.  This is used for keeping track of who's
  * logged into which account, for the benefit of irc services.
  */
-#define ACCOUNTLEN      15
+#define ACCOUNTLEN      60
 /** Maximum length for user supplied information about a client
  * connection (gcos). This information is set at client/server registration
  * time.
@@ -91,14 +91,14 @@
 #define SOCKIPLEN 45
 /** Maximum length for channel topics and kill comments.
  */
-#define TOPICLEN        250
+#define TOPICLEN        450
 /** Maximum length for away messages.
  */
 #define AWAYLEN		250
 /** Exactly long enough to hold one protocol message (RFC 1459)
  * including the line termination (\\r\\n).  DO NOT CHANGE THIS!!!!
  */
-#define BUFSIZE         512
+#define BUFSIZE        1024
 
 /** Maximum available targets for a user. */
 #define MAXTARGETS      20
